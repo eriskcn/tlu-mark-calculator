@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <script src="https://cdn.tailwindcss.com"><script/>
+</head>
+
+<body class="bg-gray-100 p-4">
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
+        <h1 class="text-2xl font-semibold mb-4">Tính điểm tổng kết TLU</h1>
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="grade">Điểm thi (T)</label>
+            <input
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="grade" type="number" placeholder="Enter final grade">
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="process-grade">Điểm quá trình (Q)</label>
+            <input
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="process-grade" type="number" placeholder="Enter process grade">
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="coefficient">Hệ số (k)</label>
+            <input
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="coefficient" type="number" min="0.3" max="1.0" step="0.1" placeholder="Enter coefficient">
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="type">Type</label>
+            <select
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="type">
+                <option value="new">Thi lần đầu</option>
+                <option value="retry">Thi lại</option>
+                <option value="improve">Thi nâng điểm</option>
+            </select>
+        </div>
+        <button
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            id="calculate-btn">Calculate</button>
+        <div class="mt-4" id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById("calculate-btn").addEventListener("click", function () {
+            const T = parseFloat(document.getElementById("grade").value);
+            const Q = parseFloat(document.getElementById("process-grade").value);
+            const k = parseFloat(document.getElementById("coefficient").value);
+            const type = document.getElementById("type").value;
+
+            let TK = 0;
+
+            if (type === 'new') {
+                if (T != 0) {
+                    if (T >= Q && Q >= 7) {
+                        TK = T;
+                    } else {
+                        TK = k * T + (1 - k) * Q;
+                    }
+                }
+            } else if (type === 'retry') {
+                TK = Math.min(7, Math.max(k * T + (1 - k) * Q, TK));
+            } else if (type === 'improve') {
+                TK = Math.max(k * T + (1 - k) * Q, 0.5 * (k * T + (1 - k) * Q + TK), 4);
+            }
+
+            TK = Math.round(TK * 10) / 10;
+
+            document.getElementById("result").innerHTML = `<p class="text-gray-700">Final Grade (TK): ${TK}</p>`;
+        });
+    </script>
+</body>
+
+</html>
